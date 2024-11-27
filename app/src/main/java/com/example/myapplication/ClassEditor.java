@@ -46,7 +46,7 @@ public class ClassEditor extends AppCompatActivity {
 
         if (getIntent().hasExtra("Class ID")){
             class_name.setText(getIntent().getStringExtra("Class Name"));
-            classID = getIntent().getIntExtra("Class ID",0);
+            classID = getIntent().getIntExtra("Class ID",1);
             class_name.setEnabled(false);
             create.setVisibility(View.GONE);
             students = database.getStudents(classID);

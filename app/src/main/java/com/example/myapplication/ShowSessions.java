@@ -24,7 +24,6 @@ public class ShowSessions extends AppCompatActivity {
     private ArrayList<Session> sessions;
     private ListAdapter listAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,16 +35,15 @@ public class ShowSessions extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         ListView listView = findViewById(R.id.listview);
-        classID = getIntent().getIntExtra("Claas ID",0);
-        database = new Database();
-        sessions =  database.getSessions(classID);
+        classID = getIntent().getIntExtra("Class ID", 0);
+        database = new Database(); // Pass context to Database constructor
+        sessions = database.getSessions(classID);
         listAdapter = new ListAdapter();
         listView.setAdapter(listAdapter);
 
-
         Button new_session = findViewById(R.id.new_session);
         new_session.setOnClickListener(v -> {
-            Intent intent = new Intent(ShowSessions.this,SessionEditor.class);
+            Intent intent = new Intent(ShowSessions.this, SessionEditor.class);
             intent.putExtra("Class ID", classID);
             startActivity(intent);
         });
@@ -58,52 +56,46 @@ public class ShowSessions extends AppCompatActivity {
         listAdapter.notifyDataSetChanged();
     }
 
-//    @Override
     private class ListAdapter extends BaseAdapter {
         @Override
-        public int getCount(){
+        public int getCount() {
             return sessions.size();
-
         }
-        @Override
-        public Object getItem(int i){
-            return  sessions.get(i);
 
-        }
         @Override
-        public long getItemId(int i){
+        public Object getItem(int i) {
+            return sessions.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
             return i;
-
         }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
-    }
-
-//            @Override
-        public View getview(int i , View view, ViewGroup viewGroup){
+        @SuppressLint("InflateParams")
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
             LayoutInflater inflater = getLayoutInflater();
-            @SuppressLint("InflateParams")
-            View v = inflater.inflate(R.layout.list_item ,null);
+            View v = inflater.inflate(R.layout.list_item, null);
             TextView text = v.findViewById(R.id.text);
-            text.setText(sessions.get(i).getSubject()+" - "+sessions.get(i).getSubject());
+            text.setText(sessions.get(i).getSubject() + " - " + sessions.get(i).getDate());
 
             text.setOnLongClickListener(v1 -> {
-                Intent intent = new Intent(ShowSessions.this , SessionEditor.class);
+                Intent intent = new Intent(ShowSessions.this, SessionEditor.class);
                 intent.putExtra("Class ID", classID);
                 intent.putExtra("Session ID", sessions.get(i).getID());
                 startActivity(intent);
                 return true;
             });
+
             text.setOnClickListener(v1 -> {
                 Intent intent = new Intent(ShowSessions.this, ViewSession.class);
                 intent.putExtra("Class ID", classID);
                 intent.putExtra("Session ID", sessions.get(i).getID());
                 startActivity(intent);
             });
-            return v;
 
+            return v;
         }
     }
 }

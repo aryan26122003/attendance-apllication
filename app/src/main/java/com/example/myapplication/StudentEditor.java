@@ -112,7 +112,7 @@ public class StudentEditor extends AppCompatActivity {
         Button sumbit = findViewById(R.id.sumbit);
         TextView delete = findViewById(R.id.delete);
 
-        classID = getIntent().getIntExtra("classID", 0);
+        classID = getIntent().getIntExtra("classID", 1);
 
         database = new Database();
 

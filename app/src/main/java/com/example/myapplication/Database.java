@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Database {
-    private String url = "jbdc:mysql://localhost:3306/attendancemanager" ;
-
+//    private String url = "jdbc:mysql://localhost:3306/atma" ;
+    private String url = "http://localhost:3306/atma/";
     private String user = "root";
     private String pass = "";
     private Statement statement;
@@ -19,6 +19,7 @@ public class Database {
             Connection connection = DriverManager.getConnection(url, user, pass);
             statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
+//            System.out.println("Driver loaded");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,9 +77,9 @@ public class Database {
             }
 
             String drop1 = "DROP TABLE `"+id+" - Sessions`;";
-        String drop2 = "DROP TABLE `"+id+" - Sessions`;";
-        statement.execute(drop1);
-        statement.execute(drop2);
+            String drop2 = "DROP TABLE `"+id+" - Sessions`;";
+            statement.execute(drop1);
+            statement.execute(drop2);
 
         } catch (Exception e){
             e.printStackTrace();
@@ -156,15 +157,15 @@ public class Database {
             e.printStackTrace();
         }
     }
-        public void deleteStudent(int classID, int studentID) {
-            try {
-                String delete = "DELETE  FROM `" + classID + " - Students` WHERE `ID` = `" + studentID + "`;";
-                statement.execute(delete);
+    public void deleteStudent(int classID, int studentID) {
+        try {
+            String delete = "DELETE  FROM `" + classID + " - Students` WHERE `ID` = `" + studentID + "`;";
+            statement.execute(delete);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
     public ArrayList<Session> getSessions(int classID) {
         ArrayList<Session> sessions = new ArrayList<>();
         try {
@@ -182,7 +183,7 @@ public class Database {
         }
         return sessions;
     }
-        public int getNextSessionID(int classID) {
+    public int getNextSessionID(int classID) {
         int id = 0;
         ArrayList<Session> sessions = getSessions(classID);
         int size = sessions.size();
@@ -192,19 +193,19 @@ public class Database {
             id= lastSession.getID() +1 ;
         }
         return id;
-        }
+    }
 
-        public void addSession(int classID, Session s){
+    public void addSession(int classID, Session s){
         try {
             String insert = "INSERT INTO `"+classID+" - Sessions` (`ID`, `Subject`,`Date`) VALUES (`"+s.getID()+"`,`"+s.getSubject()+"`,`"+s.getDate()+"`);";
             statement.execute(insert);
             String create = "CREATE TABLE IF NOT EXISTS `"+classID+" - "+s.getID()+"` (`ID` integer);";
-                statement.execute(create);
-             }catch (Exception e){
+            statement.execute(create);
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
-      public Session getSession(int classID,int sessionID){
+    public Session getSession(int classID,int sessionID){
         Session s = new Session();
         try {
             String select = "SELECT `ID`, `Subject`,`Date` FROM `"+classID+" - Sessions` WHERE `ID` = "+sessionID+";";
@@ -229,8 +230,8 @@ public class Database {
             e.printStackTrace();
         }
         return s;
-      }
-      public void updateSessionDate(int classID,Session s){
+    }
+    public void updateSessionDate(int classID,Session s){
         try {
             String update = "UPDATE `"+classID+"- Sessions ` SET `Subject` = '"+s.getSubject()+"',`Date`= `"+s.getDate()+"` WHERE `ID` = "+s.getID()+";";
             statement.executeQuery(update);
@@ -238,9 +239,9 @@ public class Database {
         catch (Exception e){
             e.printStackTrace();
         }
-      }
+    }
 
-      public void deleteSession(int classID, int sessionID){
+    public void deleteSession(int classID, int sessionID){
         try{
             String delete= "DELETE FROM `"+classID+" - Sessions` WHERE `ID` = "+sessionID+";";
             statement.execute(delete);
@@ -250,39 +251,96 @@ public class Database {
         }catch (Exception e){
             e.printStackTrace();
         }
-      }
-            public void deleteSessionByID(int classID,int sessionID) {
-                try {
-                    String delete = "DELETE FROM`" + classID + " - Sessions` WHERE `ID` = " + sessionID + ";";
-                    statement.execute(delete);
-                    String drop = "DROP TABLE `" + classID + " - " + sessionID + "`;";
-                    statement.execute(drop);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-                public void addStudentsToSession( int classID, int sessionID, ArrayList<Integer> students){
-                    try{
-                        for (Integer i: students){
+    }
+    public void deleteSessionByID(int classID,int sessionID) {
+        try {
+            String delete = "DELETE FROM`" + classID + " - Sessions` WHERE `ID` = " + sessionID + ";";
+            statement.execute(delete);
+            String drop = "DROP TABLE `" + classID + " - " + sessionID + "`;";
+            statement.execute(drop);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addStudentsToSession( int classID, int sessionID, ArrayList<Integer> students){
+        try{
+            for (Integer i: students){
 //                            String insert = "INSERT INTO `"+classID+"-  "sessionID+"` (`ID`) VALUES ('"+i+"');";
-                            String insert = "INSERT INTO `" + classID + " - " + sessionID + "` (`ID`) VALUES ('" + i + "');";
-                            statement.execute(insert);
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                }
-                public void removeStudentsFromSession(int classID,int sessionID ,ArrayList<Integer> students){
-                        try {
-                            for (Integer i : students) {
-                                String delete = "DELETE FROM `" + classID + " - " + sessionID + "` WHERE `ID` = " + i + ";";
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
-                }
-
-
+                String insert = "INSERT INTO `" + classID + " - " + sessionID + "` (`ID`) VALUES ('" + i + "');";
+                statement.execute(insert);
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    public void removeStudentsFromSession(int classID,int sessionID ,ArrayList<Integer> students){
+        try {
+            for (Integer i : students) {
+                String delete = "DELETE FROM `" + classID + " - " + sessionID + "` WHERE `ID` = " + i + ";";
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+}
 //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
